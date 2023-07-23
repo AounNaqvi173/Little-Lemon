@@ -25,9 +25,28 @@ const Profile = ({ navigation }) => {
             const lastName = await AsyncStorage.getItem('lastName');
             const email = await AsyncStorage.getItem('email');
             const phoneNumber = await AsyncStorage.getItem('phoneNumber');
-            await AsyncStorage.setItem('orderStatus', orderStatus);
-            await AsyncStorage.setItem('specialOffers', specialOffers);
-            await AsyncStorage.setItem('newsletters', newsletters);
+            await AsyncStorage.getItem('orderStatus').then((value) => {
+                if (value == null) {
+                    AsyncStorage.setItem('orderStatus', orderStatus);
+                } else {
+                    setOrderStatus(value);
+                }
+            });
+            await AsyncStorage.getItem('specialOffers').then((value) => {
+                if (value == null) {
+                    AsyncStorage.setItem('specialOffers', specialOffers);
+                } else {
+                    setSpecialOffers(value);
+                }
+            });
+            await AsyncStorage.getItem('newsletters').then((value) => {
+                if (value == null) {
+                    AsyncStorage.setItem('newsletters', newsletters);
+                } else {
+                    setNewsletters(value);
+                }
+            });
+
             setFirstName(firstName);
             setLastName(lastName);
             setEmail(email);
@@ -56,7 +75,7 @@ const Profile = ({ navigation }) => {
                 );
                 return;
             } else {
-                console.log("All fields are filled", firstName, lastName, email, phoneNumber);
+                console.log("All fields are filled", firstName, lastName, email, phoneNumber, orderStatus, specialOffers, newsletters);
                 await AsyncStorage.setItem('firstName', firstName);
                 await AsyncStorage.setItem('lastName', lastName);
                 await AsyncStorage.setItem('email', email);

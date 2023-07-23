@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, ScrollView, Text, TextInput, View } from 'react-native'
+import { StyleSheet, ScrollView, Text, TextInput, View, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { COLORS, FONTS, SIZES } from '../utils/theme'
@@ -115,7 +115,7 @@ const Profile = ({ navigation }) => {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.Header}>
-                <TouchableOpacity onPress={() => console.log('h')}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Text style={{ fontSize: 20, color: COLORS.white }}>Back</Text>
                 </TouchableOpacity>
                 <Image source={require('../assets/Logo.png')} style={styles.logo} />
@@ -126,12 +126,12 @@ const Profile = ({ navigation }) => {
             </View>
             <View style={styles.bodySection}>
                 <Text style={styles.sectionTitle}>Personal information</Text>
-                <View style={styles.profileImageContainer}>
+                <View style={styles.profileImageAndEditButtons}>
                     <Image source={require('../assets/profile-pic.png')}
-                        style={styles.profileImage} />
-                    <Pressable style={styles.editButton}>
-                        <Text style={styles.editButtonText}>Change</Text>
-                    </Pressable>
+                        style={styles.profileImageMain} />
+                    <TouchableOpacity style={[styles.saveButton, { height: 45 }]}>
+                        <Text style={styles.saveButtonText}>Change</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <Text style={styles.inputLabel}>First Name</Text>
@@ -171,24 +171,26 @@ const Profile = ({ navigation }) => {
                         onChangeText={text => setPhoneNumber(text)}
                     />
                 </View>
+                <View style={{ marginBottom: 20 }}>
+                    <Text style={styles.sectionTitle}>Email Notifications</Text>
+                    <View style={styles.tickBoxContainer}>
+                        <View style={styles.tickBox}></View>
+                        <Text style={styles.tickBoxText}>Order Status</Text>
+                    </View>
+                    <View style={styles.tickBoxContainer}>
+                        <View style={styles.tickBox}></View>
+                        <Text style={styles.tickBoxText}>Special Offers</Text>
+                    </View>
+                    <View style={styles.tickBoxContainer}>
+                        <View style={styles.tickBox}></View>
+                        <Text style={styles.tickBoxText}>Newsletters</Text>
+                    </View>
 
-                <Text style={styles.inputLabel}>Email Notifications</Text>
-                <View style={styles.tickBoxContainer}>
-                    <View style={styles.tickBox}></View>
-                    <Text style={styles.tickBoxText}>Order Status</Text>
-                </View>
-                <View style={styles.tickBoxContainer}>
-                    <View style={styles.tickBox}></View>
-                    <Text style={styles.tickBoxText}>Special Offers</Text>
-                </View>
-                <View style={styles.tickBoxContainer}>
-                    <View style={styles.tickBox}></View>
-                    <Text style={styles.tickBoxText}>Newsletters</Text>
                 </View>
 
-                <Pressable style={styles.logOutButton} onPress={() => handleLogOut()}>
-                    <Text style={styles.logOutButtonText}>LogOut</Text>
-                </Pressable>
+                <TouchableOpacity style={styles.logOutButton} onPress={() => handleLogOut()}>
+                    <Text style={styles.logOutButtonText}>Log out</Text>
+                </TouchableOpacity>
             </View>
 
             {
@@ -201,12 +203,12 @@ const Profile = ({ navigation }) => {
                     newsletters !== originalData.newsletters
                     ?
                     <View style={styles.buttonSection}>
-                        <Pressable style={styles.saveButtonDisabled} onPress={() => handleDiscard()}>
+                        <TouchableOpacity style={styles.saveButtonDisabled} onPress={() => handleDiscard()}>
                             <Text style={[styles.saveButtonText, { color: COLORS.darkGreen }]}>Discard Changes</Text>
-                        </Pressable>
-                        <Pressable style={styles.saveButton} onPress={() => handleSave()}>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.saveButton} onPress={() => handleSave()}>
                             <Text style={styles.saveButtonText}>Save Changes</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                     </View>
                     : null
             }
@@ -251,17 +253,30 @@ const styles = StyleSheet.create({
     bodySection: {
         width: '100%',
         paddingHorizontal: 20,
-        paddingVertical: 10,
     },
     sectionTitle: {
-        fontSize: SIZES.huge,
+        fontSize: SIZES.medium,
         fontFamily: FONTS.sectionTitle,
         color: COLORS.darkGreen,
+        marginBottom: 10,
+    },
+    profileImageAndEditButtons: {
+        flexDirection: 'row',
+        alignItems: 'center',
         marginVertical: 10,
+        marginHorizontal: 10,
+
+    },
+    profileImageMain: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        resizeMode: 'contain',
+        marginRight: 10,
     },
     inputLabel: {
-        fontSize: SIZES.medium,
-        fontFamily: FONTS.paragraph,
+        fontSize: SIZES.medium - 2,
+        fontFamily: FONTS.cardTitle,
         color: COLORS.darkGreen,
         marginVertical: 5,
     },
@@ -269,7 +284,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 50,
         borderWidth: 1,
-        borderColor: COLORS.grey,
+        borderColor: "#EDEFEE",
         borderRadius: 10,
         paddingHorizontal: 10,
         justifyContent: 'center',
@@ -278,7 +293,7 @@ const styles = StyleSheet.create({
     input: {
         fontSize: SIZES.medium,
         fontFamily: FONTS.paragraph,
-        color: COLORS.darkGreen,
+        color: COLORS.black,
     },
     tickBoxContainer: {
         flexDirection: 'row',
@@ -310,8 +325,8 @@ const styles = StyleSheet.create({
     },
     logOutButtonText: {
         fontSize: SIZES.medium,
-        fontFamily: FONTS.paragraph,
-        color: COLORS.darkGreen,
+        fontFamily: FONTS.cardTitle,
+        color: COLORS.black,
     },
     buttonSection: {
         width: '100%',
@@ -324,7 +339,7 @@ const styles = StyleSheet.create({
         width: '40%',
         height: 50,
         backgroundColor: COLORS.darkGreen,
-        borderRadius: 10,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -332,15 +347,15 @@ const styles = StyleSheet.create({
         width: '40%',
         height: 50,
         backgroundColor: COLORS.white,
-        borderRadius: 10,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
         borderColor: COLORS.darkGreen,
     },
     saveButtonText: {
-        fontSize: SIZES.medium,
-        fontFamily: FONTS.paragraph,
+        fontSize: SIZES.medium - 2,
+        fontFamily: FONTS.cardTitle,
         color: COLORS.white,
     },
 

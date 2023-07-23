@@ -115,8 +115,8 @@ const Profile = ({ navigation }) => {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.Header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={{ fontSize: 20, color: COLORS.white }}>Back</Text>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
+                    <Image source={require('../assets/back.png')} style={styles.backIcon} />
                 </TouchableOpacity>
                 <Image source={require('../assets/Logo.png')} style={styles.logo} />
                 <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={styles.profileImageContainer}>
@@ -131,6 +131,9 @@ const Profile = ({ navigation }) => {
                         style={styles.profileImageMain} />
                     <TouchableOpacity style={[styles.saveButton, { height: 45 }]}>
                         <Text style={styles.saveButtonText}>Change</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.saveButtonDisabled, { height: 45 }]}>
+                        <Text style={[styles.saveButtonText, { color: COLORS.darkGreen }]}>Remove</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -255,6 +258,22 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    backIconContainer: {
+        width: 50,
+        height: 50,
+        borderRadius: 20,
+        borderColor: COLORS.darkGreen,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 10,
+
+    },
+    backIcon: {
+        width: 20,
+        height: 20,
+        resizeMode: 'contain',
+        tintColor: COLORS.white,
     },
     logo: {
         width: 150,

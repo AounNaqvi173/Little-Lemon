@@ -13,19 +13,16 @@ const WelcomeScreen = ({ navigation }) => {
 
   const [validEmail, setValidEmail] = useState(false);
 
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
 
   const [passwordVisible, setPasswordVisible] = useState(false);
 
 
-
-  const loginFormSchema = Yup.object().shape({
-    fist_name: Yup.string().required('Your first name is required'),
-    last_name: Yup.string().required('Your last name is required'),
-    email: Yup.string().email().required('An email is required'),
-    phone_number: Yup.number().required('Your phone number is required'),
-    password: Yup.string().required().min(6, 'Your password must have atleast 6 characters'),
-
-  });
 
 
   //ref
@@ -36,9 +33,7 @@ const WelcomeScreen = ({ navigation }) => {
   const passwordRef = useRef();
 
 
-  const handleLogin = async (firstName, lastName, email, phoneNumber, password) => {
-    console.log(firstName, lastName, email, phoneNumber, password);
-
+  const handleLogin = async () => {
     try {
       if (firstName.length == 0 || lastName.length == 0 || email.length == 0 || phoneNumber.length == 0 || password.length == 0) {
         Alert.alert("Dear user",
@@ -97,108 +92,101 @@ const WelcomeScreen = ({ navigation }) => {
         </View>
 
       </View>
-      <Formik
-        initialValues={{ first_name: '', last_name: '', email: '', phone_number: '', password: '', }}
-        onSubmit={(values) => {
-        console.log(values.first_name, values.last_name, values.email, values.phone_number, values.password);
-        }}
-        validationSchema={loginFormSchema}
-        validateOnMount={true}>
 
-        {({ handleChange, handleBlur, handleSubmit, values, isValid }) => (
+      <View style={styles.contentContainer}>
+        <View style={styles.textInputContainer}>
+          <Text style={styles.text}>First Name *</Text>
+          <TextInput style={styles.textInput}
+            placeholder="Enter your first name"
+            autoCorrect={false}
+            placeholderTextColor="grey"
+            onChangeText={(text) => {
+              console.log(text);
+              setFirstName(text);
+            }}
+            onSubmitEditing={() => lastNameRef.current.focus()}
+            ref={firstNameRef}
+            value={firstName}
+          />
+        </View>
 
-          <>
-            <View style={styles.contentContainer}>
-              <View style={styles.textInputContainer}>
-                <Text style={styles.text}>First Name *</Text>
-                <TextInput style={styles.textInput}
-                  placeholder="Enter your first name"
-                  autoCorrect={false}
-                  placeholderTextColor="grey"
-                  onChangeText={(text) => {
-                    console.log(text);
-                    handleChange('first_name')
-                  }}
-                  onBlur={handleBlur('first_name')}
-                  onSubmitEditing={() => lastNameRef.current.focus()}
-                  ref={firstNameRef}
-                  value={values.first_name}
-                />
-              </View>
-
-              <View style={styles.textInputContainer}>
-                <Text style={styles.text}>Last Name *</Text>
-                <TextInput style={styles.textInput}
-                  placeholder="Enter your last name"
-                  autoCorrect={false}
-                  placeholderTextColor="grey"
-
-                  onBlur={handleBlur('last_name')}
-                  onChangeText={handleChange('last_name')}
-                  onSubmitEditing={() => emailRef.current.focus()}
-                  ref={lastNameRef}
-                  value={values.last_name}
-                />
-              </View>
+        <View style={styles.textInputContainer}>
+          <Text style={styles.text}>Last Name *</Text>
+          <TextInput style={styles.textInput}
+            placeholder="Enter your last name"
+            autoCorrect={false}
+            placeholderTextColor="grey"
+            onChangeText={(text) => { setLastName(text); }}
+            onSubmitEditing={() => emailRef.current.focus()}
+            ref={lastNameRef}
+            value={lastName}
+          />
+        </View>
 
 
-              <View style={styles.textInputContainer}>
-                <Text style={styles.text}>Email *</Text>
-                <TextInput style={styles.textInput}
-                  placeholder="Enter  your email address"
-                  autoCorrect={false}
-                  placeholderTextColor="grey"
+        <View style={styles.textInputContainer}>
+          <Text style={styles.text}>Email *</Text>
+          <TextInput style={styles.textInput}
+            placeholder="Enter  your email address"
+            autoCorrect={false}
+            placeholderTextColor="grey"
 
-                  keyboardType='email-address'
-                  onBlur={handleBlur('email')}
-                  onChangeText={handleChange('email')}
-                  onSubmitEditing={() => phoneNumberRef.current.focus()}
-                  ref={emailRef}
-                  value={values.email}
-                />
-              </View>
+            keyboardType='email-address'
+            onChangeText={(text) => {
+              setEmail(text);
+              if (validateEmail(text)) {
+                setValidEmail(true);
+              }
+              else {
+                setValidEmail(false);
+              }
+            }}
+            onSubmitEditing={() => phoneNumberRef.current.focus()}
+            ref={emailRef}
+            value={email}
+          />
+        </View>
 
 
-              <View style={styles.textInputContainer}>
-                <Text style={styles.text}>Phone</Text>
-                <TextInput style={styles.textInput}
-                  placeholder="Enter your phone number"
-                  autoCorrect={false}
-                  placeholderTextColor="grey"
+        <View style={styles.textInputContainer}>
+          <Text style={styles.text}>Phone</Text>
+          <TextInput style={styles.textInput}
+            placeholder="Enter your phone number"
+            autoCorrect={false}
+            placeholderTextColor="grey"
 
-                  keyboardType='number-pad'
-                  onChangeText={handleChange('phone_number')}
-                  onBlur={handleBlur('phone_number')}
-                  onSubmitEditing={() => passwordRef.current.focus()}
-                  ref={phoneNumberRef}
-                />
-              </View>
+            keyboardType='number-pad'
+            onChangeText={(text) => setPhoneNumber(text)}
+            onSubmitEditing={() => passwordRef.current.focus()}
+            ref={phoneNumberRef}
+          />
+        </View>
 
-              <View style={styles.textInputContainer}>
-                <Text style={styles.text}>Password *</Text>
-                <TextInput style={styles.textInput}
-                  placeholder="Enter your phone number"
-                  autoCorrect={false}
-                  placeholderTextColor="grey"
+        <View style={styles.textInputContainer}>
+          <Text style={styles.text}>Password *</Text>
+          <TextInput style={styles.textInput}
+            placeholder="Enter your phone number"
+            autoCorrect={false}
+            placeholderTextColor="grey"
+            secureTextEntry={true}
+            onChangeText={(text) => setPassword(text)}
+            onSubmitEditing={() => passwordRef.current.blur()}
+            ref={passwordRef}
+            value={password}
+          />
+        </View>
+      </View>
 
-                  secureTextEntry={true}
-                  onChangeText={handleChange('password')}
-                  onSubmitEditing={() => passwordRef.current.blur()}
-                  onBlur={handleBlur('password')}
-                  ref={passwordRef}
-                  value={values.password}
-                />
-              </View>
-            </View>
+      <TouchableOpacity style={styles.button(firstName.length == 0 || lastName.length == 0 || email.length == 0 || phoneNumber.length == 0 || password.length == 0 || validEmail
 
-            <TouchableOpacity style={styles.button(isValid)}
-              onPress={() => handleSubmit()}>
+        ? false : true)}
 
-              <Text style={styles.buttonText}>Next</Text>
-          </TouchableOpacity>
-      </>
-        )}
-    </Formik>
+
+        onPress={() => handleLogin()}
+      >
+        <Text style={styles.buttonText}>Next</Text>
+      </TouchableOpacity>
+
     </ScrollView>
   )
 };

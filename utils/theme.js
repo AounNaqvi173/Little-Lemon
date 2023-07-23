@@ -5,7 +5,7 @@ const COLORS = {
     white: '#FFFFFF',
     black: '#000000',
     grey: '#808080',
-    red: '#FF0000',
+    red: '#FF0000', 
 }
 
 const SIZES = {
@@ -20,7 +20,7 @@ const FONTS = {
     heroHeading: 'MarkaziText-Medium',
     heroSubHeading: 'MarkaziText-Regular',
     heroText: 'Karla-Medium',
-    sectionTitle: 'Karla-EtraBold',
+    sectionTitle: 'Karla-ExtraBold',
     cardTitle: 'Karla-Bold',
     paragraph: 'Karla-Regular',
 }

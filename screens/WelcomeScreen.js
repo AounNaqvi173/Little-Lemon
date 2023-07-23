@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
-import { SafeAreaView, View, Alert, Text, Image, TextInput, TouchableOpacity, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { SafeAreaView, View, Alert, Text, Image, TextInput, Pressable, StyleSheet, FlatList, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { validateEmail } from '../utils/index';
 
-import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { COLORS, FONTS, SIZES } from '../utils/theme';
 
 
@@ -18,11 +16,6 @@ const WelcomeScreen = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-
-  const [passwordVisible, setPasswordVisible] = useState(false);
-
-
 
 
   //ref
@@ -99,6 +92,7 @@ const WelcomeScreen = ({ navigation }) => {
           <TextInput style={styles.textInput}
             placeholder="Enter your first name"
             autoCorrect={false}
+            importantForAutofill='no'
             placeholderTextColor="grey"
             onChangeText={(text) => {
               console.log(text);
@@ -116,6 +110,7 @@ const WelcomeScreen = ({ navigation }) => {
             placeholder="Enter your last name"
             autoCorrect={false}
             placeholderTextColor="grey"
+            importantForAutofill='no'
             onChangeText={(text) => { setLastName(text); }}
             onSubmitEditing={() => emailRef.current.focus()}
             ref={lastNameRef}
@@ -130,7 +125,7 @@ const WelcomeScreen = ({ navigation }) => {
             placeholder="Enter  your email address"
             autoCorrect={false}
             placeholderTextColor="grey"
-
+            importantForAutofill='no'
             keyboardType='email-address'
             onChangeText={(text) => {
               setEmail(text);
@@ -154,6 +149,7 @@ const WelcomeScreen = ({ navigation }) => {
             placeholder="Enter your phone number"
             autoCorrect={false}
             placeholderTextColor="grey"
+            importantForAutofill='no'
 
             keyboardType='number-pad'
             onChangeText={(text) => setPhoneNumber(text)}
@@ -168,6 +164,7 @@ const WelcomeScreen = ({ navigation }) => {
             placeholder="Enter your phone number"
             autoCorrect={false}
             placeholderTextColor="grey"
+            importantForAutofill='no'
             secureTextEntry={true}
             onChangeText={(text) => setPassword(text)}
             onSubmitEditing={() => passwordRef.current.blur()}
@@ -177,15 +174,10 @@ const WelcomeScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.button(firstName.length == 0 || lastName.length == 0 || email.length == 0 || phoneNumber.length == 0 || password.length == 0 || validEmail
-
-        ? false : true)}
-
-
-        onPress={() => handleLogin()}
-      >
+      <Pressable style={styles.button(firstName.length == 0 || lastName.length == 0 || email.length == 0 || phoneNumber.length == 0 || password.length == 0 || validEmail == false ? false : true)}
+        onPress={() => handleLogin()}      >
         <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
+      </Pressable>
 
     </ScrollView>
   )
@@ -268,7 +260,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: SIZES.medium,
-    fontFamily: FONTS.paragraph,
+    fontFamily: FONTS.heroText,
     color: COLORS.darkGreen,
     textAlign: 'left',
     marginBottom: 5,

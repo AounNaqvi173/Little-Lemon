@@ -13,7 +13,7 @@ const RootNavigator = () => {
 
 
 
-  const [isFirstLaunch, setIsFirstLaunch] = React.useState(true);
+  const [isFirstLaunch, setIsFirstLaunch] = React.useState(null);
 
   let routeName;
 

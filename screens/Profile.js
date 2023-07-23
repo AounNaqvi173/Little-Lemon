@@ -173,18 +173,43 @@ const Profile = ({ navigation }) => {
                 </View>
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.sectionTitle}>Email Notifications</Text>
-                    <View style={styles.tickBoxContainer}>
-                        <View style={styles.tickBox}></View>
+                    <TouchableOpacity style={styles.tickBoxContainer} onPress={() => {
+                        if (orderStatus == 'true') {
+                            setOrderStatus('false');
+                        } else {
+                            setOrderStatus('true');
+                        }
+                    }}>
+                        {orderStatus === 'true' ? <Image source={require('../assets/tick.png')} style={{ width: 20, height: 20, marginRight: 10 }} />
+                            : <View style={styles.tickBox}></View>
+                        }
                         <Text style={styles.tickBoxText}>Order Status</Text>
-                    </View>
-                    <View style={styles.tickBoxContainer}>
-                        <View style={styles.tickBox}></View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.tickBoxContainer} onPress={() => {
+                        if (specialOffers == 'true') {
+                            setSpecialOffers('false');
+                        } else {
+                            setSpecialOffers('true');
+                        }
+                    }}>
+                        {specialOffers === 'true' ? <Image source={require('../assets/tick.png')} style={{ width: 20, height: 20, marginRight: 10 }} />
+                            : <View style={styles.tickBox}></View>
+                        }
                         <Text style={styles.tickBoxText}>Special Offers</Text>
-                    </View>
-                    <View style={styles.tickBoxContainer}>
-                        <View style={styles.tickBox}></View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.tickBoxContainer} onPress={() => {
+                        if (newsletters == 'true') {
+                            setNewsletters('false');
+                        } else {
+                            setNewsletters('true');
+                        }
+                    }}>
+                        {newsletters === 'true' ? <Image source={require('../assets/tick.png')} style={{ width: 20, height: 20, marginRight: 10 }} />
+                            : <View style={styles.tickBox}></View>
+                        }
                         <Text style={styles.tickBoxText}>Newsletters</Text>
-                    </View>
+                    </TouchableOpacity>
 
                 </View>
 
@@ -214,7 +239,7 @@ const Profile = ({ navigation }) => {
             }
 
 
-        </ScrollView>
+        </ScrollView >
     )
 }
 

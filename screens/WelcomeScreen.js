@@ -1,23 +1,205 @@
 import * as React from 'react';
-import { SafeAreaView, View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { SafeAreaView, View, Alert, Text, Image, TextInput, TouchableOpacity, StyleSheet, FlatList, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { validateEmail } from '../utils/index';
+
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { COLORS, FONTS, SIZES } from '../utils/theme';
+
 
 const WelcomeScreen = ({ navigation }) => {
+
+  const [validEmail, setValidEmail] = useState(false);
+
+
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+
+
+  const loginFormSchema = Yup.object().shape({
+    fist_name: Yup.string().required('Your first name is required'),
+    last_name: Yup.string().required('Your last name is required'),
+    email: Yup.string().email().required('An email is required'),
+    phone_number: Yup.number().required('Your phone number is required'),
+    password: Yup.string().required().min(6, 'Your password must have atleast 6 characters'),
+
+  });
+
+
+  //ref
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
+  const emailRef = useRef();
+  const phoneNumberRef = useRef();
+  const passwordRef = useRef();
+
+
+  const handleLogin = async (firstName, lastName, email, phoneNumber, password) => {
+    console.log(firstName, lastName, email, phoneNumber, password);
+
+    try {
+      if (firstName.length == 0 || lastName.length == 0 || email.length == 0 || phoneNumber.length == 0 || password.length == 0) {
+        Alert.alert("Dear user",
+          "Please fill in all the fields",
+          [
+            {
+              text: "Ok",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            },
+          ],
+        );
+        return;
+      } else {
+        console.log("All fields are filled", firstName, lastName, email, phoneNumber, password);
+        await AsyncStorage.setItem('alreadyLaunched', 'true');
+        await AsyncStorage.setItem('firstName', firstName);
+        await AsyncStorage.setItem('lastName', lastName);
+        await AsyncStorage.setItem('email', email);
+        await AsyncStorage.setItem('phoneNumber', phoneNumber);
+        navigation.replace('Home');
+      }
+
+
+
+    }
+    catch (error) {
+      console.log(error);
+    }
+
+  }
+
+
+
+
   // Add welcome screen code here.
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={require('../assets/little-lemon-logo.png')} style={styles.image} />
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>Welcome to Little Lemon, Your Local Bistro!</Text>
+    <ScrollView style={styles.container}>
+      <View style={styles.Header}>
+        <Image source={require('../assets/Logo.png')} style={styles.logo} />
       </View>
 
-      <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate('Subscribe')}>
-        <Text style={styles.buttonText}>Newsletter</Text>
-      </Pressable>
-    </SafeAreaView>
+      <View style={styles.heroSection}>
+        <View>
+          <Text style={styles.title}>Little Lemon</Text>
+          <Text style={styles.location}>Chicago</Text>
+        </View>
+
+        <View style={styles.imageAndTextContainer}>
+          <View style={styles.textContainer}>
+            <Text style={styles.description}>We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.</Text>
+          </View>
+          <View style={styles.imageContainer}>
+            <Image source={require('../assets/hero-image.png')} style={styles.image} />
+          </View>
+        </View>
+
+      </View>
+      <Formik
+        initialValues={{ first_name: '', last_name: '', email: '', phone_number: '', password: '', }}
+        onSubmit={(values) => {
+        console.log(values.first_name, values.last_name, values.email, values.phone_number, values.password);
+        }}
+        validationSchema={loginFormSchema}
+        validateOnMount={true}>
+
+        {({ handleChange, handleBlur, handleSubmit, values, isValid }) => (
+
+          <>
+            <View style={styles.contentContainer}>
+              <View style={styles.textInputContainer}>
+                <Text style={styles.text}>First Name *</Text>
+                <TextInput style={styles.textInput}
+                  placeholder="Enter your first name"
+                  autoCorrect={false}
+                  placeholderTextColor="grey"
+                  onChangeText={(text) => {
+                    console.log(text);
+                    handleChange('first_name')
+                  }}
+                  onBlur={handleBlur('first_name')}
+                  onSubmitEditing={() => lastNameRef.current.focus()}
+                  ref={firstNameRef}
+                  value={values.first_name}
+                />
+              </View>
+
+              <View style={styles.textInputContainer}>
+                <Text style={styles.text}>Last Name *</Text>
+                <TextInput style={styles.textInput}
+                  placeholder="Enter your last name"
+                  autoCorrect={false}
+                  placeholderTextColor="grey"
+
+                  onBlur={handleBlur('last_name')}
+                  onChangeText={handleChange('last_name')}
+                  onSubmitEditing={() => emailRef.current.focus()}
+                  ref={lastNameRef}
+                  value={values.last_name}
+                />
+              </View>
+
+
+              <View style={styles.textInputContainer}>
+                <Text style={styles.text}>Email *</Text>
+                <TextInput style={styles.textInput}
+                  placeholder="Enter  your email address"
+                  autoCorrect={false}
+                  placeholderTextColor="grey"
+
+                  keyboardType='email-address'
+                  onBlur={handleBlur('email')}
+                  onChangeText={handleChange('email')}
+                  onSubmitEditing={() => phoneNumberRef.current.focus()}
+                  ref={emailRef}
+                  value={values.email}
+                />
+              </View>
+
+
+              <View style={styles.textInputContainer}>
+                <Text style={styles.text}>Phone</Text>
+                <TextInput style={styles.textInput}
+                  placeholder="Enter your phone number"
+                  autoCorrect={false}
+                  placeholderTextColor="grey"
+
+                  keyboardType='number-pad'
+                  onChangeText={handleChange('phone_number')}
+                  onBlur={handleBlur('phone_number')}
+                  onSubmitEditing={() => passwordRef.current.focus()}
+                  ref={phoneNumberRef}
+                />
+              </View>
+
+              <View style={styles.textInputContainer}>
+                <Text style={styles.text}>Password *</Text>
+                <TextInput style={styles.textInput}
+                  placeholder="Enter your phone number"
+                  autoCorrect={false}
+                  placeholderTextColor="grey"
+
+                  secureTextEntry={true}
+                  onChangeText={handleChange('password')}
+                  onSubmitEditing={() => passwordRef.current.blur()}
+                  onBlur={handleBlur('password')}
+                  ref={passwordRef}
+                  value={values.password}
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity style={styles.button(isValid)}
+              onPress={() => handleSubmit()}>
+
+              <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
+      </>
+        )}
+    </Formik>
+    </ScrollView>
   )
 };
 
@@ -25,36 +207,108 @@ const WelcomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-evenly',
+  },
+  Header: {
+    width: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  imageContainer: {
+  logo: {
+    width: 150,
+    height: 100,
+    resizeMode: 'contain',
+  },
+  heroSection: {
+    backgroundColor: '#495E57',
+    width: '100%',
+    justifyContent: 'center',
+    paddingVertical: 15,
+  },
+  title: {
+    fontSize: SIZES.huge,
+    color: COLORS.yellow,
+    fontFamily: FONTS.heroHeading,
+    marginHorizontal: 10,
+  },
+  location: {
+    fontFamily: FONTS.heroSubHeading,
+    fontSize: SIZES.extraLarge,
+    marginHorizontal: 10,
+    color: COLORS.white,
+    marginTop: -20,
+  },
+  imageAndTextContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: '100%',
+  },
+  textContainer: {
+    width: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  description: {
+    fontSize: SIZES.medium - 2,
+    color: COLORS.white,
+    fontFamily: FONTS.heroText,
+    textAlign: 'left',
+  },
 
+  imageContainer: {
+    width: '40%',
     justifyContent: 'center',
   },
   image: {
-    width: 200,
-    height: 200,
+    width: "100%",
+    height: 150,
     resizeMode: 'contain',
 
   },
-  textContainer: {
-    marginHorizontal: 20,
+
+  contentContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  textInputContainer: {
+    width: '80%',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    marginVertical: 10,
   },
   text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontSize: SIZES.medium,
+    fontFamily: FONTS.paragraph,
+    color: COLORS.darkGreen,
+    textAlign: 'left',
+    marginBottom: 5,
   },
-  button: {
-    backgroundColor: 'green',
+  textInput: {
+    width: '100%',
+    height: 45,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: COLORS.grey,
+    paddingHorizontal: 10,
+    fontSize: SIZES.medium,
+    fontFamily: FONTS.paragraph,
+    color: COLORS.darkGreen,
+  },
+
+
+  button: (isValid) => ({
+    marginVertical: 20,
+    alignSelf: 'center',
+    backgroundColor: isValid ? '#FFD700' : 'grey',
     borderRadius: 10,
     width: "80%",
     height: 45,
     justifyContent: 'center',
     alignItems: 'center',
     bottom: 0
-  },
+  }),
   buttonText: {
     fontSize: 20,
     fontWeight: 'bold',

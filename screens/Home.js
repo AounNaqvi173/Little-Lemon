@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SafeAreaView, View, Text, TextInput, Alert, Image, Pressable, StyleSheet } from 'react-native';
 import { validateEmail } from '../utils';
-const SubscribeScreen = ({ navigation }) => {
+const Home = ({ navigation }) => {
 
 
   const [email, setEmail] = React.useState('');
@@ -94,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SubscribeScreen;
+export default Home;

@@ -73,7 +73,7 @@ const Home = ({ navigation }) => {
     if (Search == '') {
       setData(originalData)
     } else {
-      setData(data.filter(item => item.title === Search))
+      setData(data.filter(item => item.title == Search))
     }
   }
 
@@ -134,7 +134,8 @@ const Home = ({ navigation }) => {
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.categoryContainer(item.category === selectedCategory ? true : false)} onPress={() => setSelectedCategory(item.category)}>
+            <TouchableOpacity style={styles.categoryContainer(item.category === selectedCategory ? true : false)} onPress={() =>
+              setSelectedCategory(item.category === selectedCategory ? '' : item.category)}>
               <Text style={styles.categoryText}>{item.category}</Text>
             </TouchableOpacity>
           )}

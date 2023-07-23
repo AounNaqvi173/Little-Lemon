@@ -111,6 +111,7 @@ const Home = ({ navigation }) => {
         <FlatList
           data={selectedCategory === '' ? data : data.filter(item => item.category === selectedCategory)}
           keyExtractor={item => item.id}
+          scrollEnabled={false}
           renderItem={({ item, index }) => (
             <View>
               <Pressable style={styles.card}>

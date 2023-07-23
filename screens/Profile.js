@@ -1,14 +1,347 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Pressable, StyleSheet, ScrollView, Text, TextInput, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { COLORS, FONTS, SIZES } from '../utils/theme'
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
+
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+
+    const [orderStatus, setOrderStatus] = useState('true');
+    const [specialOffers, setSpecialOffers] = useState('true');
+    const [newsletters, setNewsletters] = useState('true');
+
+
+    const [originalData, setOriginalData] = useState([]);
+
+
+    const getDetails = async () => {
+        try {
+            const firstName = await AsyncStorage.getItem('firstName');
+            const lastName = await AsyncStorage.getItem('lastName');
+            const email = await AsyncStorage.getItem('email');
+            const phoneNumber = await AsyncStorage.getItem('phoneNumber');
+            await AsyncStorage.setItem('orderStatus', orderStatus);
+            await AsyncStorage.setItem('specialOffers', specialOffers);
+            await AsyncStorage.setItem('newsletters', newsletters);
+            setFirstName(firstName);
+            setLastName(lastName);
+            setEmail(email);
+            setPhoneNumber(phoneNumber);
+            setOriginalData({ firstName, lastName, email, phoneNumber, orderStatus, specialOffers, newsletters });
+            setIsLoaded(true);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    const handleSave = async () => {
+        try {
+            if (firstName.length == 0 || lastName.length == 0 || email.length == 0 || phoneNumber.length == 0) {
+                Alert.alert("Dear user",
+                    "Please fill in all the fields",
+                    [
+                        {
+                            text: "Ok",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ],
+                );
+                return;
+            } else {
+                console.log("All fields are filled", firstName, lastName, email, phoneNumber);
+                await AsyncStorage.setItem('firstName', firstName);
+                await AsyncStorage.setItem('lastName', lastName);
+                await AsyncStorage.setItem('email', email);
+                await AsyncStorage.setItem('phoneNumber', phoneNumber);
+                await AsyncStorage.setItem('orderStatus', orderStatus);
+                await AsyncStorage.setItem('specialOffers', specialOffers);
+                await AsyncStorage.setItem('newsletters', newsletters);
+                setOriginalData({ firstName, lastName, email, phoneNumber, orderStatus, specialOffers, newsletters });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    const handleDiscard = async () => {
+        try {
+            setFirstName(originalData.firstName);
+            setLastName(originalData.lastName);
+            setEmail(originalData.email);
+            setPhoneNumber(originalData.phoneNumber);
+            setOrderStatus(originalData.orderStatus);
+            setSpecialOffers(originalData.specialOffers);
+            setNewsletters(originalData.newsletters);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    const handleLogOut = async () => {
+        try {
+            await AsyncStorage.clear();
+            navigation.replace('OnBoarding');
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+
+
+
+    useEffect(() => {
+        getDetails();
+    }, [])
+
+
+    if (!isLoaded) {
+        return null;
+    }
+
+
     return (
-        <View>
-            <Text>Profile</Text>
-        </View>
+        <ScrollView style={styles.container}>
+            <View style={styles.Header}>
+                <TouchableOpacity onPress={() => console.log('h')}>
+                    <Text style={{ fontSize: 20, color: COLORS.white }}>Back</Text>
+                </TouchableOpacity>
+                <Image source={require('../assets/Logo.png')} style={styles.logo} />
+                <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={styles.profileImageContainer}>
+                    <Image source={require('../assets/profile-pic.png')}
+                        style={styles.profileImage} />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.bodySection}>
+                <Text style={styles.sectionTitle}>Personal information</Text>
+                <View style={styles.profileImageContainer}>
+                    <Image source={require('../assets/profile-pic.png')}
+                        style={styles.profileImage} />
+                    <Pressable style={styles.editButton}>
+                        <Text style={styles.editButtonText}>Change</Text>
+                    </Pressable>
+                </View>
+
+                <Text style={styles.inputLabel}>First Name</Text>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        value={firstName}
+                        onChangeText={text => setFirstName(text)}
+                    />
+                </View>
+
+                <Text style={styles.inputLabel}>Last Name</Text>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        value={lastName}
+                        onChangeText={text => setLastName(text)}
+                    />
+                </View>
+
+                <Text style={styles.inputLabel}>Email</Text>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        value={email}
+                        onChangeText={text => setEmail(text)}
+                    />
+
+                </View>
+
+                <Text style={styles.inputLabel}>Phone Number</Text>
+                <View style={styles.inputContainer}>
+
+                    <TextInput
+                        style={styles.input}
+                        value={phoneNumber}
+                        onChangeText={text => setPhoneNumber(text)}
+                    />
+                </View>
+
+                <Text style={styles.inputLabel}>Email Notifications</Text>
+                <View style={styles.tickBoxContainer}>
+                    <View style={styles.tickBox}></View>
+                    <Text style={styles.tickBoxText}>Order Status</Text>
+                </View>
+                <View style={styles.tickBoxContainer}>
+                    <View style={styles.tickBox}></View>
+                    <Text style={styles.tickBoxText}>Special Offers</Text>
+                </View>
+                <View style={styles.tickBoxContainer}>
+                    <View style={styles.tickBox}></View>
+                    <Text style={styles.tickBoxText}>Newsletters</Text>
+                </View>
+
+                <Pressable style={styles.logOutButton} onPress={() => handleLogOut()}>
+                    <Text style={styles.logOutButtonText}>LogOut</Text>
+                </Pressable>
+            </View>
+
+            {
+                firstName !== originalData.firstName ||
+                    lastName !== originalData.lastName ||
+                    email !== originalData.email ||
+                    phoneNumber !== originalData.phoneNumber ||
+                    orderStatus !== originalData.orderStatus ||
+                    specialOffers !== originalData.specialOffers ||
+                    newsletters !== originalData.newsletters
+                    ?
+                    <View style={styles.buttonSection}>
+                        <Pressable style={styles.saveButtonDisabled} onPress={() => handleDiscard()}>
+                            <Text style={[styles.saveButtonText, { color: COLORS.darkGreen }]}>Discard Changes</Text>
+                        </Pressable>
+                        <Pressable style={styles.saveButton} onPress={() => handleSave()}>
+                            <Text style={styles.saveButtonText}>Save Changes</Text>
+                        </Pressable>
+                    </View>
+                    : null
+            }
+
+
+        </ScrollView>
     )
 }
 
 export default Profile
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: COLORS.white,
+    },
+    Header: {
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    logo: {
+        width: 150,
+        height: 100,
+        resizeMode: 'contain',
+    },
+    profileImageContainer: {
+        width: 50,
+        height: 50,
+        borderRadius: 20,
+        borderColor: COLORS.darkGreen,
+        marginRight: 10,
+    },
+    profileImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 20,
+        resizeMode: 'contain',
+        marginRight: 10,
+    },
+    bodySection: {
+        width: '100%',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+    },
+    sectionTitle: {
+        fontSize: SIZES.huge,
+        fontFamily: FONTS.sectionTitle,
+        color: COLORS.darkGreen,
+        marginVertical: 10,
+    },
+    inputLabel: {
+        fontSize: SIZES.medium,
+        fontFamily: FONTS.paragraph,
+        color: COLORS.darkGreen,
+        marginVertical: 5,
+    },
+    inputContainer: {
+        width: '100%',
+        height: 50,
+        borderWidth: 1,
+        borderColor: COLORS.grey,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        justifyContent: 'center',
+        marginBottom: 10,
+    },
+    input: {
+        fontSize: SIZES.medium,
+        fontFamily: FONTS.paragraph,
+        color: COLORS.darkGreen,
+    },
+    tickBoxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 5,
+    },
+    tickBox: {
+        width: 20,
+        height: 20,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: COLORS.grey,
+        marginRight: 10,
+    },
+    tickBoxText: {
+        fontSize: SIZES.medium,
+        fontFamily: FONTS.paragraph,
+        color: COLORS.darkGreen,
+
+    },
+    logOutButton: {
+        width: '100%',
+        height: 50,
+        backgroundColor: COLORS.yellow,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    logOutButtonText: {
+        fontSize: SIZES.medium,
+        fontFamily: FONTS.paragraph,
+        color: COLORS.darkGreen,
+    },
+    buttonSection: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+    },
+    saveButton: {
+        width: '40%',
+        height: 50,
+        backgroundColor: COLORS.darkGreen,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    saveButtonDisabled: {
+        width: '40%',
+        height: 50,
+        backgroundColor: COLORS.white,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: COLORS.darkGreen,
+    },
+    saveButtonText: {
+        fontSize: SIZES.medium,
+        fontFamily: FONTS.paragraph,
+        color: COLORS.white,
+    },
+
+})

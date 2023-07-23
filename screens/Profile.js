@@ -267,14 +267,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginLeft: 10,
-        backgroundColor: COLORS.darkGreen,
+        //   backgroundColor: COLORS.lightGreen,
 
     },
     backIcon: {
         width: 20,
         height: 20,
         resizeMode: 'contain',
-        tintColor: COLORS.white,
+        tintColor: COLORS.darkGreen,
     },
     logo: {
         width: 150,

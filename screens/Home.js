@@ -70,10 +70,11 @@ const Home = ({ navigation }) => {
 
 
   const onSearch = () => {
-    if (Search === '') {
+    if (Search == '') {
       setData(originalData)
+    } else {
+      setData(data.filter(item => item.title === Search))
     }
-    setData(data.filter(item => item.title === Search))
   }
 
 
@@ -112,7 +113,14 @@ const Home = ({ navigation }) => {
             setSearch(text);
             onSearch()
           }}
-          placeholder="Search" />
+          onClearIconPress={() => {
+            setSearch('');
+            setData(originalData)
+          }
+          }
+          value={Search}
+          placeholder="Search"
+        />
 
       </View>
 
@@ -241,10 +249,10 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     marginHorizontal: 10,
-    marginTop: 5,
-    marginBottom: 15,
+    marginTop: 15,
+    marginBottom: 5,
     backgroundColor: '#EDEFEE',
-    height: 40,
+    // height: 60,
   },
   contentContainer: {
     width: '100%',

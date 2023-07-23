@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { SafeAreaView, View, Text, TextInput, Alert, Image, Pressable, ScrollView, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { COLORS, FONTS, SIZES } from '../utils/theme';
+import { Searchbar } from 'react-native-paper';
 
 
 const Home = ({ navigation }) => {
@@ -51,6 +52,12 @@ const Home = ({ navigation }) => {
     }
   ]);
 
+
+  const [Search, setSearch] = React.useState('');
+
+  const [originalData, setOriginalData] = React.useState(data);
+
+
   const [category, setCategory] = React.useState([
 
     { id: 2, category: 'Starters', },
@@ -60,6 +67,17 @@ const Home = ({ navigation }) => {
   ]);
 
   const [selectedCategory, setSelectedCategory] = React.useState('');
+
+
+  const onSearch = () => {
+    if (Search === '') {
+      setData(originalData)
+    }
+    setData(data.filter(item => item.title === Search))
+  }
+
+
+
 
   return (
     <ScrollView style={styles.container}>
@@ -88,6 +106,14 @@ const Home = ({ navigation }) => {
             <Image source={require('../assets/hero-image.png')} style={styles.image} />
           </View>
         </View>
+
+        <Searchbar style={styles.searchBar}
+          onChangeText={(text) => {
+            setSearch(text);
+            onSearch()
+          }}
+          placeholder="Search" />
+
       </View>
 
       <View style={styles.contentContainer}>
@@ -213,7 +239,13 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
 
   },
-
+  searchBar: {
+    marginHorizontal: 10,
+    marginTop: 5,
+    marginBottom: 15,
+    backgroundColor: '#EDEFEE',
+    height: 40,
+  },
   contentContainer: {
     width: '100%',
     marginTop: 20,

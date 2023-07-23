@@ -129,10 +129,10 @@ const Profile = ({ navigation }) => {
                 <View style={styles.profileImageAndEditButtons}>
                     <Image source={require('../assets/profile-pic.png')}
                         style={styles.profileImageMain} />
-                    <TouchableOpacity style={[styles.saveButton, { height: 45 }]}>
+                    <TouchableOpacity style={[styles.saveButton, { height: 45, width: "25%", marginHorizontal: 5 }]}>
                         <Text style={styles.saveButtonText}>Change</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.saveButtonDisabled, { height: 45 }]}>
+                    <TouchableOpacity style={[styles.saveButtonDisabled, { height: 45, width: "25%", marginHorizontal: 5 }]}>
                         <Text style={[styles.saveButtonText, { color: COLORS.darkGreen }]}>Remove</Text>
                     </TouchableOpacity>
                 </View>
@@ -263,10 +263,11 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 20,
-        borderColor: COLORS.darkGreen,
+        borderColor: 'red',
         justifyContent: 'center',
         alignItems: 'center',
         marginLeft: 10,
+        backgroundColor: COLORS.darkGreen,
 
     },
     backIcon: {
